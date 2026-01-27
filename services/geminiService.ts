@@ -1,17 +1,27 @@
+import { GoogleGenAI } from "@google/genai";
 
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+// 1. OBTENCIÓN SEGURA DE LA LLAVE 🛡️
+// Buscamos en process.env, en import.meta.env (Vite) o usamos una de respaldo.
+// El "|| 'DEMO_KEY_TEMPORAL'" es lo que EVITA LA PANTALLA BLANCA.
+const apiKey = process.env.API_KEY || 
+               process.env.GEMINI_API_KEY ||
+               (import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) || 
+               "DEMO_KEY_TEMPORAL";
 
-// Always use the process.env.API_KEY directly for initialization as per guidelines.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// 2. Inicializamos el cliente con lo que hayamos encontrado
+const ai = new GoogleGenAI({ apiKey: apiKey });
 
 export const getKoreDeskAssistantResponse = async (message: string) => {
   try {
-    // Using gemini-3-flash-preview for basic text tasks.
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: message,
+      model: 'gemini-2.0-flash-exp', // Usamos un modelo válido (el 3-preview a veces da error si no tienes acceso)
+      contents: {
+          role: 'user',
+          parts: [{ text: message }]
+      },
       config: {
-        systemInstruction: `You are KoreDesk Expert, a highly professional AI assistant for a B2B platform named KoreDesk. 
+        systemInstruction: {
+            parts: [{ text: `You are KoreDesk Expert, a highly professional AI assistant for a B2B platform named KoreDesk. 
         KoreDesk specializes in AI-powered sales assistants, customer support centralization, and high-performance automation.
         
         Key Selling Points to Mention:
@@ -23,39 +33,44 @@ export const getKoreDeskAssistantResponse = async (message: string) => {
         Tone: Professional, expert, helpful, and concise. 
         Language: Spanish (as the main target is Spanish-speaking B2B).
         
-        Always encourage the user to book a "Consultoría Gratuita" if they have complex business needs.`,
+        Always encourage the user to book a "Consultoría Gratuita" if they have complex business needs.` }]
+        },
         temperature: 0.7,
         topP: 0.95,
       },
     });
-    // Access the text property directly (not a method).
-    return response.text;
+    
+    // Acceso seguro al texto
+    return response.text ? response.text() : "No pude generar una respuesta.";
   } catch (error) {
     console.error("Gemini API Error:", error);
-    return "Lo siento, tuve un problema al procesar tu solicitud. Por favor, inténtalo de nuevo más tarde o contacta directamente con nuestro equipo.";
+    return "Lo siento, tuve un problema al procesar tu solicitud (Verifica tu API Key).";
   }
 };
 
 export async function* streamKoreDeskResponse(message: string) {
   try {
-    // Generate streaming content for better user experience.
     const responseStream = await ai.models.generateContentStream({
-      model: 'gemini-3-flash-preview',
-      contents: message,
+      model: 'gemini-2.0-flash-exp',
+      contents: {
+          role: 'user',
+          parts: [{ text: message }]
+      },
       config: {
-        systemInstruction: `You are KoreDesk Expert, a highly professional AI assistant for KoreDesk. 
-        Spanish language only. Professional and results-oriented.`,
+        systemInstruction: {
+            parts: [{ text: `You are KoreDesk Expert, a highly professional AI assistant for KoreDesk. 
+        Spanish language only. Professional and results-oriented.` }]
+        },
         temperature: 0.7,
       },
     });
 
     for await (const chunk of responseStream) {
-      // Access the text property of each chunk.
-      const text = chunk.text;
+      const text = chunk.text();
       if (text) yield text;
     }
   } catch (error) {
     console.error("Gemini Streaming Error:", error);
-    yield "Error de conexión.";
+    yield "Error de conexión con el asistente.";
   }
 }
