@@ -1,16 +1,19 @@
-import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import './index.css';
+// import App from './App'; // Comentamos tu App temporalmente
 
 const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
-}
 
-const root = ReactDOM.createRoot(rootElement);
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+if (!rootElement) {
+  console.error("ERROR FATAL: No encuentro el div con id 'root'");
+} else {
+  console.log("React está intentando montar...");
+  ReactDOM.createRoot(rootElement).render(
+    <div style={{ backgroundColor: 'red', color: 'white', height: '100vh', padding: '50px', fontSize: '30px' }}>
+      <h1>¡SISTEMA FUNCIONANDO! 🚀</h1>
+      <p>Si ves esto, React funciona bien.</p>
+      <p>El problema estaba en App.tsx o en la configuración de rutas.</p>
+    </div>
+  );
+}
