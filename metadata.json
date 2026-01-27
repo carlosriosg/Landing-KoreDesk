@@ -1,0 +1,7 @@
+{
+  "name": "KoreDesk AI Performance Platform",
+  "description": "A high-performance AI-driven platform for B2B sales automation and customer support centralization.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
