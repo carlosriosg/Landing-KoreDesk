@@ -2,14 +2,17 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./*.{js,ts,jsx,tsx}",           // Busca en la raíz (App.tsx, index.tsx)
+    "./components/**/*.{js,ts,jsx,tsx}", // Busca en la carpeta components
+    "./pages/**/*.{js,ts,jsx,tsx}",      // Busca en la carpeta pages
+    "./services/**/*.{js,ts,jsx,tsx}"    // Busca en la carpeta services
   ],
   theme: {
     extend: {
       colors: {
-        primary: '#005F99',      // Azul KoreDesk
-        accent: '#00D100',       // Verde vibrante (o cambia a tu naranja #FF9900)
-        'dark-ui': '#0F172A',    // Fondo oscuro paneles
+        primary: '#005F99',
+        accent: '#00D100',
+        'dark-ui': '#0F172A',
       },
       fontFamily: {
         sans: ['Poppins', 'sans-serif'],
