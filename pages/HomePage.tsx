@@ -1,8 +1,8 @@
-
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Footer from '../components/Footer';
-import ChatWidget from '../components/ChatWidget';
 import Logo from '../components/Logo';
+
+// Nota: He quitado la importación de ChatWidget porque usaremos el script en index.html
 
 const HomePage: React.FC = () => {
     const [stats, setStats] = useState({ chats: 1242, efficiency: 94.2 });
@@ -335,7 +335,7 @@ const HomePage: React.FC = () => {
             </main>
             
             <Footer />
-            <ChatWidget />
+            {/* AQUÍ ESTABA <ChatWidget /> y LO ELIMINÉ */}
 
             <style>{`
                 @keyframes scanline {
