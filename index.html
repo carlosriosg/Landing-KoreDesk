@@ -32,45 +32,40 @@
       })(document,"script");
     </script>
 
-    <script>
-      // Delegación de eventos: Escucha clics en todo el documento
-      // (Ideal para React porque funciona aunque los botones carguen después)
+   <script>
+      // Este script espera pacientemente a que alguien haga clic en la página
       document.addEventListener('click', function(e) {
         
-        // 1. Detectar si el elemento clicado (o su padre) es el botón "Agendar Demo"
+        // 1. ¿El usuario hizo clic en el botón "Agendar Demo"?
         const target = e.target.closest('button') || e.target;
         
-        // Verificamos si tiene el texto correcto
         if (target && target.innerText && target.innerText.includes('Agendar Demo')) {
             
-            // 2. Buscar el campo de email más cercano
+            // 2. Buscar el campo de email
             const inputEmail = document.querySelector('input[type="email"]');
             
-            // Si no hay input de email, no es el formulario correcto, salimos.
+            // Si no hay input cerca, no es el formulario correcto.
             if (!inputEmail) return; 
 
-            // Prevenimos comportamiento por defecto
-            e.preventDefault(); 
+            e.preventDefault(); // Evitamos recargas
 
             const email = inputEmail.value;
-
-            // 👇👇👇👇 PEGA AQUÍ TU URL DE N8N (WEBHOOK PRODUCTION) 👇👇👇👇
+            // TU URL REAL DE N8N
             const n8nUrl = 'https://n8n.koredesk.com/webhook/nuevo-lead'; 
-            // 👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆👆
 
-            // Validación simple
+            // Validación
             if (!email || !email.includes('@')) {
                 alert("⚠️ Por favor ingresa un correo válido.");
                 return;
             }
 
-            // Feedback Visual: "Enviando..."
+            // Efecto "Cargando..."
             const textoOriginal = target.innerText;
             target.innerText = "Enviando... 🚀";
             target.style.opacity = "0.7";
             target.disabled = true;
 
-            // Enviar datos a n8n
+            // Enviar a n8n
             fetch(n8nUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -79,19 +74,19 @@
             .then(res => {
                 if (res.ok) {
                     alert("✅ ¡Recibido! Te contactaremos pronto.");
-                    inputEmail.value = ""; // Limpiar campo
+                    inputEmail.value = ""; // Borrar lo que escribió
                     target.innerText = "¡Enviado!";
                 } else {
                     target.innerText = "Error ❌";
-                    alert("Hubo un error al enviar. Intenta nuevamente.");
+                    alert("Hubo un error al enviar. Intenta de nuevo.");
                 }
             })
             .catch(err => {
-                console.error('Error enviando a n8n:', err);
+                console.error(err);
                 target.innerText = textoOriginal;
             })
             .finally(() => {
-                // Restaurar botón a los 3 segundos
+                // Restaurar el botón a los 3 segundos
                 setTimeout(() => {
                     target.disabled = false;
                     target.innerText = textoOriginal;
